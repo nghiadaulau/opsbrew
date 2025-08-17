@@ -23,142 +23,220 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v4
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v1
         with:
-          go-version: '1.24'
+          mdbook-version: 'latest'
 
-      - name: Download dependencies
-        run: go mod download
-
-      - name: Build binary
-        run: go build -o opsbrew .
-
-      - name: Create docs directory
-        run: mkdir -p docs
-
-      - name: Generate documentation
+      - name: Create book structure
         run: |
-          # Create basic documentation structure
-          echo "# opsbrew Documentation" > docs/index.md
-          echo "" >> docs/index.md
-          echo "## Overview" >> docs/index.md
-          echo "" >> docs/index.md
-          echo "opsbrew is a powerful CLI tool designed to streamline DevOps workflows." >> docs/index.md
-          echo "" >> docs/index.md
-          echo "## Installation" >> docs/index.md
-          echo "" >> docs/index.md
-          echo "### From Source" >> docs/index.md
-          echo "" >> docs/index.md
-          echo '```bash' >> docs/index.md
-          echo 'git clone https://github.com/nghiadaulau/opsbrew.git' >> docs/index.md
-          echo 'cd opsbrew' >> docs/index.md
-          echo 'go build -o opsbrew .' >> docs/index.md
-          echo 'sudo mv opsbrew /usr/local/bin/' >> docs/index.md
-          echo '```' >> docs/index.md
-          echo "" >> docs/index.md
-          echo "### Using Go Install" >> docs/index.md
-          echo "" >> docs/index.md
-          echo '```bash' >> docs/index.md
-          echo 'go install github.com/nghiadaulau/opsbrew@latest' >> docs/index.md
-          echo '```' >> docs/index.md
+          mkdir -p book/src
+          cp README.md book/src/
+          cp RELEASE.md book/src/
 
-      - name: Copy README to docs
-        run: cp README.md docs/README.md
-
-      - name: Create _config.yml for Jekyll
+      - name: Create book.toml
         run: |
-          cat > docs/_config.yml << EOF
-          title: opsbrew
-          description: A powerful CLI tool designed to streamline DevOps workflows
-          url: https://nghiadaulau.github.io/opsbrew
-          baseurl: /opsbrew
+          cat > book/book.toml << 'EOF'
+          [book]
+          authors = ["nghiadaulau"]
+          language = "en"
+          multilingual = false
+          src = "src"
+          title = "opsbrew Documentation"
           
-          # GitHub Pages settings
-          github:
-            repository_url: https://github.com/nghiadaulau/opsbrew
-            repository_name: opsbrew
+          [output.html]
+          git-repository-url = "https://github.com/nghiadaulau/opsbrew"
+          git-repository-icon = "fa-github"
+          default-theme = "light"
+          preferred-dark-theme = "navy"
+          mathjax-support = true
           
-          # Navigation
-          navigation:
-            - title: Home
-              url: /
-            - title: README
-              url: /README.html
+          [output.html.fold]
+          enable = true
+          level = 1
           
-          # Theme settings
-          theme: jekyll-theme-cayman
-          
-          # Markdown settings
-          markdown: kramdown
-          kramdown:
-            input: GFM
-            syntax_highlighter: rouge
-          
-          # Exclude files
-          exclude:
-            - Gemfile
-            - Gemfile.lock
-            - node_modules
-            - vendor
+          [output.html.additional-css]
+          [output.html.additional-js]
           EOF
 
-      - name: Create navigation
+      - name: Create SUMMARY.md
         run: |
-          mkdir -p docs/_includes
-          cat > docs/_includes/navigation.html << EOF
-          <nav class="site-nav">
-            <a href="{{ site.baseurl }}/">Home</a>
-            <a href="{{ site.baseurl }}/README.html">Documentation</a>
-            <a href="{{ site.github.repository_url }}">GitHub</a>
-          </nav>
+          cat > book/src/SUMMARY.md << 'EOF'
+          # Summary
+          
+          [Introduction](README.md)
+          [Release Guide](RELEASE.md)
+          
+          # Commands
+          
+          ## Git Commands
+          - [git status](commands/git-status.md)
+          - [git sync](commands/git-sync.md)
+          - [git checkout](commands/git-checkout.md)
+          
+          ## Kubernetes Commands
+          - [k8s kctx](commands/k8s-kctx.md)
+          - [k8s kns](commands/k8s-kns.md)
+          - [k8s khpa](commands/k8s-khpa.md)
+          - [k8s kscale](commands/k8s-kscale.md)
+          
+          ## File Commands
+          - [file open](commands/file-open.md)
+          - [file backup](commands/file-backup.md)
+          - [file find](commands/file-find.md)
+          
+          ## Other Commands
+          - [brew](commands/brew.md)
+          - [init](commands/init.md)
+          - [completion](commands/completion.md)
           EOF
 
-      - name: Create home page
+      - name: Create command documentation
         run: |
-          cat > docs/index.md << 'EOF'
-          ---
-          layout: default
-          title: opsbrew - DevOps CLI Tool
-          ---
+          mkdir -p book/src/commands
           
-          # opsbrew
+          # Git commands
+          cat > book/src/commands/git-status.md << 'EOF'
+          # git status
           
-          A powerful CLI tool designed to simplify and shorten repetitive DevOps terminal commands.
-          
-          **Source**: [github.com/nghiadaulau/opsbrew](https://github.com/nghiadaulau/opsbrew)
-          
-          ## Features
-          
-          - **Git Operations**: Enhanced Git commands with fuzzy finder for branches
-          - **Kubernetes Management**: kubectl shortcuts with context/namespace switching, HPA management, and scaling
-          - **File Operations**: Common file operations like backup, diff, find, and grep
-          - **Command Recipes**: Save and run command macros for daily workflows
-          - **Project Templates**: Bootstrap common project structures
-          - **Safe Defaults**: Built-in `--dry-run` and `--confirm` flags
-          - **Configuration**: YAML-based configuration (global + per-repo)
-          - **Shell Completions**: Full shell completion support
-          
-          ## Quick Start
+          Show the working tree status.
           
           ```bash
-          # Install
-          go install github.com/nghiadaulau/opsbrew@latest
-          
-          # Git operations
           opsbrew git status
+          ```
+          EOF
+          
+          cat > book/src/commands/git-sync.md << 'EOF'
+          # git sync
+          
+          Sync current branch with remote using rebase.
+          
+          ```bash
           opsbrew git sync
+          ```
+          EOF
           
-          # Kubernetes operations
+          cat > book/src/commands/git-checkout.md << 'EOF'
+          # git checkout
+          
+          Checkout branch with fuzzy finder.
+          
+          ```bash
+          opsbrew git checkout [branch]
+          ```
+          EOF
+          
+          # Kubernetes commands
+          cat > book/src/commands/k8s-kctx.md << 'EOF'
+          # k8s kctx
+          
+          Switch Kubernetes context with fuzzy finder.
+          
+          ```bash
           opsbrew k8s kctx
-          opsbrew k8s khpa set-min my-hpa 2 -n production
+          ```
+          EOF
           
-          # File operations
+          cat > book/src/commands/k8s-kns.md << 'EOF'
+          # k8s kns
+          
+          Switch Kubernetes namespace with fuzzy finder.
+          
+          ```bash
+          opsbrew k8s kns
+          ```
+          EOF
+          
+          cat > book/src/commands/k8s-khpa.md << 'EOF'
+          # k8s khpa
+          
+          Manage HPA (Horizontal Pod Autoscaler).
+          
+          ```bash
+          opsbrew k8s khpa list
+          opsbrew k8s khpa set-min my-hpa 2 -n production
+          opsbrew k8s khpa set-max my-hpa 10 -n production
+          ```
+          EOF
+          
+          cat > book/src/commands/k8s-kscale.md << 'EOF'
+          # k8s kscale
+          
+          Scale Kubernetes resources.
+          
+          ```bash
+          opsbrew k8s kscale deployment my-app 3 -n production
+          ```
+          EOF
+          
+          # File commands
+          cat > book/src/commands/file-open.md << 'EOF'
+          # file open
+          
+          Open file with default editor.
+          
+          ```bash
+          opsbrew file open config.yaml
+          ```
+          EOF
+          
+          cat > book/src/commands/file-backup.md << 'EOF'
+          # file backup
+          
+          Create backup of file.
+          
+          ```bash
           opsbrew file backup config.yaml
           ```
-          
-          [View Full Documentation]({{ site.baseurl }}/README.html)
           EOF
+          
+          cat > book/src/commands/file-find.md << 'EOF'
+          # file find
+          
+          Find files by name or pattern.
+          
+          ```bash
+          opsbrew file find "*.yaml"
+          ```
+          EOF
+          
+          # Other commands
+          cat > book/src/commands/brew.md << 'EOF'
+          # brew
+          
+          Manage and run command recipes/macros.
+          
+          ```bash
+          opsbrew brew save my-workflow
+          opsbrew brew run my-workflow
+          opsbrew brew list
+          ```
+          EOF
+          
+          cat > book/src/commands/init.md << 'EOF'
+          # init
+          
+          Initialize a new project from template.
+          
+          ```bash
+          opsbrew init github-actions
+          opsbrew init k8s-deployment
+          ```
+          EOF
+          
+          cat > book/src/commands/completion.md << 'EOF'
+          # completion
+          
+          Generate completion script.
+          
+          ```bash
+          opsbrew completion bash
+          opsbrew completion zsh
+          ```
+          EOF
+
+      - name: Build mdBook
+        run: mdbook build book
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -166,7 +244,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: book/book
 
   deploy:
     environment:
