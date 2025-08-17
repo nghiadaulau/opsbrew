@@ -105,6 +105,7 @@ jobs:
 
       - name: Create navigation
         run: |
+          mkdir -p docs/_includes
           cat > docs/_includes/navigation.html << EOF
           <nav class="site-nav">
             <a href="{{ site.baseurl }}/">Home</a>

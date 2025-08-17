@@ -73,7 +73,10 @@ var gitSyncCmd = &cobra.Command{
 		if !confirm && !cfg.UI.Confirm {
 			fmt.Print("Pull with rebase? (y/N): ")
 			var response string
-			fmt.Scanln(&response)
+			if _, err := fmt.Scanln(&response); err != nil {
+				color.Red("Error reading input: %v", err)
+				return err
+			}
 			if strings.ToLower(response) != "y" && strings.ToLower(response) != "yes" {
 				color.Yellow("Operation cancelled")
 				return nil

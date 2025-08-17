@@ -42,7 +42,10 @@ var brewSaveCmd = &cobra.Command{
 		for {
 			fmt.Print("> ")
 			var input string
-			fmt.Scanln(&input)
+			if _, err := fmt.Scanln(&input); err != nil {
+				color.Red("Error reading input: %v", err)
+				return err
+			}
 			if input == "" {
 				break
 			}
@@ -138,7 +141,10 @@ var brewRunCmd = &cobra.Command{
 		if !confirm && !cfg.UI.Confirm {
 			fmt.Printf("Run recipe '%s'? (y/N): ", name)
 			var response string
-			fmt.Scanln(&response)
+			if _, err := fmt.Scanln(&response); err != nil {
+				color.Red("Error reading input: %v", err)
+				return err
+			}
 			if strings.ToLower(response) != "y" && strings.ToLower(response) != "yes" {
 				color.Yellow("Operation cancelled")
 				return nil
@@ -154,7 +160,7 @@ var brewRunCmd = &cobra.Command{
 		// Execute commands
 		for i, command := range recipe.Commands {
 			color.Cyan("Executing command %d/%d: %s", i+1, len(recipe.Commands), command)
-			
+
 			// Split command into parts
 			parts := strings.Fields(command)
 			if len(parts) == 0 {
@@ -206,7 +212,10 @@ var brewDeleteCmd = &cobra.Command{
 		if !confirm && !cfg.UI.Confirm {
 			fmt.Printf("Delete recipe '%s'? (y/N): ", name)
 			var response string
-			fmt.Scanln(&response)
+			if _, err := fmt.Scanln(&response); err != nil {
+				color.Red("Error reading input: %v", err)
+				return err
+			}
 			if strings.ToLower(response) != "y" && strings.ToLower(response) != "yes" {
 				color.Yellow("Operation cancelled")
 				return nil
@@ -256,7 +265,10 @@ var brewEditCmd = &cobra.Command{
 		// Get new description
 		fmt.Print("New description (press Enter to keep current): ")
 		var newDescription string
-		fmt.Scanln(&newDescription)
+		if _, err := fmt.Scanln(&newDescription); err != nil {
+			color.Red("Error reading input: %v", err)
+			return err
+		}
 		if newDescription != "" {
 			recipe.Description = newDescription
 		}
@@ -264,7 +276,10 @@ var brewEditCmd = &cobra.Command{
 		// Get new tags
 		fmt.Print("New tags (comma-separated, press Enter to keep current): ")
 		var newTags string
-		fmt.Scanln(&newTags)
+		if _, err := fmt.Scanln(&newTags); err != nil {
+			color.Red("Error reading input: %v", err)
+			return err
+		}
 		if newTags != "" {
 			recipe.Tags = strings.Split(newTags, ",")
 			for i, tag := range recipe.Tags {
@@ -278,7 +293,10 @@ var brewEditCmd = &cobra.Command{
 		for {
 			fmt.Print("> ")
 			var input string
-			fmt.Scanln(&input)
+			if _, err := fmt.Scanln(&input); err != nil {
+				color.Red("Error reading input: %v", err)
+				return err
+			}
 			if input == "" {
 				break
 			}
