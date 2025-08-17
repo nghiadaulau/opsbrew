@@ -2,10 +2,13 @@
 
 A powerful CLI tool designed to simplify and shorten repetitive DevOps terminal commands. opsbrew provides shortcuts for common Git and kubectl operations, with features like fuzzy finders, command recipes, and project templates.
 
+**Source**: [github.com/nghiadaulau/opsbrew](https://github.com/nghiadaulau/opsbrew)
+
 ## Features
 
 - **Git Operations**: Enhanced Git commands with fuzzy finder for branches
-- **Kubernetes Management**: kubectl shortcuts with context/namespace switching
+- **Kubernetes Management**: kubectl shortcuts with context/namespace switching, HPA management, and scaling
+- **File Operations**: Common file operations like backup, diff, find, and grep
 - **Command Recipes**: Save and run command macros for daily workflows
 - **Project Templates**: Bootstrap common project structures
 - **Safe Defaults**: Built-in `--dry-run` and `--confirm` flags
@@ -17,7 +20,7 @@ A powerful CLI tool designed to simplify and shorten repetitive DevOps terminal 
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/opsbrew.git
+git clone https://github.com/nghiadaulau/opsbrew.git
 cd opsbrew
 go build -o opsbrew .
 sudo mv opsbrew /usr/local/bin/
@@ -26,7 +29,7 @@ sudo mv opsbrew /usr/local/bin/
 ### Using Go Install
 
 ```bash
-go install github.com/yourusername/opsbrew@latest
+go install github.com/nghiadaulau/opsbrew@latest
 ```
 
 ## Quick Start
@@ -49,6 +52,8 @@ go install github.com/yourusername/opsbrew@latest
    opsbrew k8s kctx           # Switch kubectl context
    opsbrew k8s kns            # Switch namespace
    opsbrew k8s klogs          # Get pod logs with fuzzy finder
+   opsbrew k8s khpa set-min my-hpa 2  # Set HPA min replicas
+   opsbrew k8s kscale deployment my-app 5  # Scale deployment
    ```
 
 4. **Command recipes**:
@@ -58,11 +63,18 @@ go install github.com/yourusername/opsbrew@latest
    opsbrew brew list            # List all recipes
    ```
 
-5. **Project templates**:
+5. **File operations**:
    ```bash
-   opsbrew init go-service my-app    # Create Go service
-   opsbrew init helm-chart my-chart  # Create Helm chart
-   opsbrew init terraform my-module  # Create Terraform module
+   opsbrew file backup config.yaml  # Create backup
+   opsbrew file find "*.yaml"       # Find files by pattern
+   opsbrew file diff file1.yaml file2.yaml  # Compare files
+   ```
+
+6. **Project templates**:
+   ```bash
+   opsbrew init github-actions my-app    # Create GitHub Actions workflow
+   opsbrew init k8s-deployment my-app    # Create K8s Deployment
+   opsbrew init k8s-service my-app       # Create K8s Service
    ```
 
 ## Configuration
@@ -128,6 +140,20 @@ ui:
 - `opsbrew k8s ksvc` - List services
 - `opsbrew k8s kingress` - List ingress resources
 - `opsbrew k8s kexec [pod] [command]` - Execute command in pod
+- `opsbrew k8s khpa list` - List all HPAs
+- `opsbrew k8s khpa get [name]` - Get HPA details
+- `opsbrew k8s khpa set-min [name] [value]` - Set minimum replicas
+- `opsbrew k8s khpa set-max [name] [value]` - Set maximum replicas
+- `opsbrew k8s khpa set-target [name] [value]` - Set target CPU percentage
+- `opsbrew k8s kscale [type] [name] [replicas]` - Scale deployment/replicaset/statefulset
+
+### File Commands
+
+- `opsbrew file open [file]` - Open file with default editor
+- `opsbrew file find [pattern] [dir]` - Find files by name or pattern
+- `opsbrew file grep [pattern] [file]` - Search for text in files
+- `opsbrew file backup [file] [backup-path]` - Create backup of file
+- `opsbrew file diff [file1] [file2]` - Show differences between files
 
 ### Brew Commands (Command Recipes)
 
@@ -139,9 +165,12 @@ ui:
 
 ### Init Commands (Project Templates)
 
-- `opsbrew init go-service [name]` - Create Go microservice
-- `opsbrew init helm-chart [name]` - Create Helm chart
-- `opsbrew init terraform [name]` - Create Terraform module
+- `opsbrew init github-actions [name]` - Create GitHub Actions workflow
+- `opsbrew init k8s-deployment [name]` - Create Kubernetes Deployment manifest
+- `opsbrew init k8s-service [name]` - Create Kubernetes Service manifest
+- `opsbrew init k8s-pod [name]` - Create Kubernetes Pod manifest
+- `opsbrew init k8s-configmap [name]` - Create Kubernetes ConfigMap manifest
+- `opsbrew init dockerfile [name]` - Create multi-stage Dockerfile
 - `opsbrew init list` - List available templates
 
 ### Global Flags
@@ -188,6 +217,17 @@ opsbrew k8s kctx dev
 
 # Check pod logs
 opsbrew k8s klogs
+
+# Manage HPA settings
+opsbrew k8s khpa set-min my-app 2
+opsbrew k8s khpa set-max my-app 10
+
+# Scale deployment
+opsbrew k8s kscale deployment my-app 5
+
+# File operations
+opsbrew file backup config.yaml
+opsbrew file find "*.yaml"
 ```
 
 ### Deployment Workflow
@@ -207,14 +247,16 @@ opsbrew k8s ksvc
 ### Project Setup
 
 ```bash
-# Create a new Go service
-opsbrew init go-service my-api
+# Create GitHub Actions workflow
+opsbrew init github-actions my-api
 
-# Create a Helm chart for deployment
-opsbrew init helm-chart my-api-chart
+# Create Kubernetes manifests
+opsbrew init k8s-deployment my-api
+opsbrew init k8s-service my-api
+opsbrew init k8s-configmap my-api
 
-# Create Terraform infrastructure
-opsbrew init terraform my-infrastructure
+# Create Dockerfile
+opsbrew init dockerfile my-api
 ```
 
 ## Development
@@ -228,7 +270,7 @@ opsbrew init terraform my-infrastructure
 ### Building from Source
 
 ```bash
-git clone https://github.com/yourusername/opsbrew.git
+git clone https://github.com/nghiadaulau/opsbrew.git
 cd opsbrew
 go mod download
 go build -o opsbrew .
