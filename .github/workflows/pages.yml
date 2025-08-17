@@ -33,6 +33,7 @@ jobs:
           mkdir -p book/src
           cp README.md book/src/
           cp RELEASE.md book/src/
+          cp INSTALL.md book/src/
 
       - name: Create book.toml
         run: |
@@ -65,6 +66,7 @@ jobs:
           # Summary
           
           [Introduction](README.md)
+          [Installation Guide](INSTALL.md)
           [Release Guide](RELEASE.md)
           
           # Commands

@@ -17,6 +17,29 @@ A powerful CLI tool designed to simplify and shorten repetitive DevOps terminal 
 
 ## Installation
 
+### Quick Install (Recommended)
+
+```bash
+# Install latest version
+go install github.com/nghiadaulau/opsbrew@latest
+
+# Verify installation
+opsbrew --version
+```
+
+### Pre-built Binaries
+
+```bash
+# Linux/macOS
+wget https://github.com/nghiadaulau/opsbrew/releases/latest/download/opsbrew_Linux_x86_64.tar.gz
+tar -xzf opsbrew_Linux_x86_64.tar.gz
+sudo mv opsbrew /usr/local/bin/
+
+# Windows
+curl -L -o opsbrew_Windows_x86_64.zip https://github.com/nghiadaulau/opsbrew/releases/latest/download/opsbrew_Windows_x86_64.zip
+# Extract and add to PATH
+```
+
 ### From Source
 
 ```bash
@@ -25,6 +48,8 @@ cd opsbrew
 go build -o opsbrew .
 sudo mv opsbrew /usr/local/bin/
 ```
+
+📖 **Detailed Installation Guide**: See [INSTALL.md](INSTALL.md) for complete instructions including upgrade, uninstall, and troubleshooting.
 
 ## Releases
 
