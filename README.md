@@ -26,6 +26,23 @@ go build -o opsbrew .
 sudo mv opsbrew /usr/local/bin/
 ```
 
+## Releases
+
+This project uses [GoReleaser](https://goreleaser.com/) for automated releases. When you push a tag starting with `v*`, it automatically:
+
+- Builds binaries for Linux, macOS, and Windows
+- Creates GitHub releases with all artifacts
+- Generates checksums for verification
+
+### Creating a Release
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+See [RELEASE.md](RELEASE.md) for detailed release instructions.
+
 ### Using Go Install
 
 ```bash
