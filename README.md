@@ -43,6 +43,20 @@ git push origin v1.0.0
 
 See [RELEASE.md](RELEASE.md) for detailed release instructions.
 
+## Documentation
+
+This project uses [mdBook](https://rust-lang.github.io/mdBook/) to generate beautiful documentation sites.
+
+- **Live Documentation**: [https://nghiadaulau.github.io/opsbrew](https://nghiadaulau.github.io/opsbrew)
+- **Documentation Setup**: See [DOCUMENTATION.md](DOCUMENTATION.md) for details
+
+The documentation site includes:
+- Complete command reference
+- Installation guides
+- Release information
+- Interactive search
+- Dark/light theme toggle
+
 ### Using Go Install
 
 ```bash
