@@ -1,0 +1,115 @@
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    binary: opsbrew
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^ci:'
+      - Merge pull request
+      - Merge branch
+
+brews:
+  - name: opsbrew
+    homepage: "https://github.com/nghiadaulau/opsbrew"
+    description: "A CLI tool to simplify and shorten repetitive DevOps terminal commands"
+    repository:
+      owner: nghiadaulau
+      name: homebrew-tap
+    commit_author:
+      name: goreleaserbot
+      email: goreleaser@carlosbecker.com
+    folder: Formula
+    goarm: "6"
+    test: |
+      system "#{bin}/opsbrew", "--version"
+    install: |
+      bin.install "opsbrew"
+    dependencies:
+      - "git"
+      - "kubectl"
+
+nfpms:
+  - maintainer: "nhatnghiatyper@gmail.com"
+    description: "A CLI tool to simplify and shorten repetitive DevOps terminal commands"
+    homepage: "https://github.com/nghiadaulau/opsbrew"
+    license: "MIT"
+    formats:
+      - deb
+      - rpm
+    bindir: /usr/local/bin
+    files:
+      - "README.md"
+      - "LICENSE"
+    dependencies:
+      - git
+      - kubectl
+    overrides:
+      deb:
+        depends:
+          - git
+          - kubectl
+      rpm:
+        depends:
+          - git
+          - kubectl
+
+dockers:
+  - image_templates:
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY }}:{{ .Version }}"
+      - "ghcr.io/{{ .Env.GITHUB_REPOSITORY }}:latest"
+    dockerfile: Dockerfile
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+      - "--platform=linux/arm64"
+    extra_files:
+      - README.md
+      - LICENSE
+
+release:
+  github:
+    owner: nghiadaulau
+    name: opsbrew
+  draft: false
+  prerelease: false
+  name_template: '{{.Tag}}'
+  release_name_template: '{{.ProjectName}} {{.Tag}}'

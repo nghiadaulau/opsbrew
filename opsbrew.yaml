@@ -1,0 +1,73 @@
+# opsbrew Configuration File
+# This file contains global configuration for the opsbrew CLI tool
+
+# Git configuration
+git:
+  default_branch: "main"
+  auto_fetch: true
+  aliases:
+    st: "status"
+    co: "checkout"
+    br: "branch"
+    cm: "commit"
+    pl: "pull"
+    ps: "push"
+    lg: "log --oneline --graph"
+    sync: "pull --rebase"
+
+# Kubernetes configuration
+kubernetes:
+  default_context: ""
+  default_namespace: "default"
+  context_aliases:
+    prod: "production-cluster"
+    dev: "development-cluster"
+    stg: "staging-cluster"
+  namespace_aliases:
+    app: "application"
+    db: "database"
+    mon: "monitoring"
+
+# Brew recipes for command macros
+brew:
+  recipes:
+    daily-sync:
+      description: "Daily development workflow"
+      commands:
+        - "git fetch --all"
+        - "git pull origin main"
+        - "git checkout -b feature/$(date +%Y%m%d)"
+      tags:
+        - "daily"
+        - "git"
+    
+    deploy-check:
+      description: "Pre-deployment checks"
+      commands:
+        - "kubectl get pods"
+        - "kubectl get services"
+        - "kubectl get ingress"
+      tags:
+        - "deploy"
+        - "k8s"
+    
+    cleanup:
+      description: "Clean up local development environment"
+      commands:
+        - "git branch --merged | grep -v '\\*\\|main\\|develop' | xargs -n 1 git branch -d"
+        - "docker system prune -f"
+        - "kubectl get pods --field-selector=status.phase=Failed -o name | xargs kubectl delete"
+      tags:
+        - "cleanup"
+        - "maintenance"
+
+# Templates configuration
+templates:
+  path: "~/.opsbrew/templates"
+
+# UI configuration
+ui:
+  colors: true
+  verbose: false
+  confirm: false
+  dry_run: false

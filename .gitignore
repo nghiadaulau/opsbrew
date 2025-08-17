@@ -1,0 +1,46 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of the go build
+*.out
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Dependency directories (go mod handles dependencies)
+vendor/
+
+# Build directories
+bin/
+dist/
+build/
+
+# Test cache & coverage
+*.cover
+*.coverprofile
+*.cov
+coverage.out
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Opsbrew specific
+opsbrew.yaml         # local config
+*.local.yaml
+.history.db          # history DB if stored locally
