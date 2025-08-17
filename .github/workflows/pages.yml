@@ -1,0 +1,180 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.24'
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build binary
+        run: go build -o opsbrew .
+
+      - name: Create docs directory
+        run: mkdir -p docs
+
+      - name: Generate documentation
+        run: |
+          # Create basic documentation structure
+          echo "# opsbrew Documentation" > docs/index.md
+          echo "" >> docs/index.md
+          echo "## Overview" >> docs/index.md
+          echo "" >> docs/index.md
+          echo "opsbrew is a powerful CLI tool designed to streamline DevOps workflows." >> docs/index.md
+          echo "" >> docs/index.md
+          echo "## Installation" >> docs/index.md
+          echo "" >> docs/index.md
+          echo "### From Source" >> docs/index.md
+          echo "" >> docs/index.md
+          echo '```bash' >> docs/index.md
+          echo 'git clone https://github.com/nghiadaulau/opsbrew.git' >> docs/index.md
+          echo 'cd opsbrew' >> docs/index.md
+          echo 'go build -o opsbrew .' >> docs/index.md
+          echo 'sudo mv opsbrew /usr/local/bin/' >> docs/index.md
+          echo '```' >> docs/index.md
+          echo "" >> docs/index.md
+          echo "### Using Go Install" >> docs/index.md
+          echo "" >> docs/index.md
+          echo '```bash' >> docs/index.md
+          echo 'go install github.com/nghiadaulau/opsbrew@latest' >> docs/index.md
+          echo '```' >> docs/index.md
+
+      - name: Copy README to docs
+        run: cp README.md docs/README.md
+
+      - name: Create _config.yml for Jekyll
+        run: |
+          cat > docs/_config.yml << EOF
+          title: opsbrew
+          description: A powerful CLI tool designed to streamline DevOps workflows
+          url: https://nghiadaulau.github.io/opsbrew
+          baseurl: /opsbrew
+          
+          # GitHub Pages settings
+          github:
+            repository_url: https://github.com/nghiadaulau/opsbrew
+            repository_name: opsbrew
+          
+          # Navigation
+          navigation:
+            - title: Home
+              url: /
+            - title: README
+              url: /README.html
+          
+          # Theme settings
+          theme: jekyll-theme-cayman
+          
+          # Markdown settings
+          markdown: kramdown
+          kramdown:
+            input: GFM
+            syntax_highlighter: rouge
+          
+          # Exclude files
+          exclude:
+            - Gemfile
+            - Gemfile.lock
+            - node_modules
+            - vendor
+          EOF
+
+      - name: Create navigation
+        run: |
+          cat > docs/_includes/navigation.html << EOF
+          <nav class="site-nav">
+            <a href="{{ site.baseurl }}/">Home</a>
+            <a href="{{ site.baseurl }}/README.html">Documentation</a>
+            <a href="{{ site.github.repository_url }}">GitHub</a>
+          </nav>
+          EOF
+
+      - name: Create home page
+        run: |
+          cat > docs/index.md << 'EOF'
+          ---
+          layout: default
+          title: opsbrew - DevOps CLI Tool
+          ---
+          
+          # opsbrew
+          
+          A powerful CLI tool designed to simplify and shorten repetitive DevOps terminal commands.
+          
+          **Source**: [github.com/nghiadaulau/opsbrew](https://github.com/nghiadaulau/opsbrew)
+          
+          ## Features
+          
+          - **Git Operations**: Enhanced Git commands with fuzzy finder for branches
+          - **Kubernetes Management**: kubectl shortcuts with context/namespace switching, HPA management, and scaling
+          - **File Operations**: Common file operations like backup, diff, find, and grep
+          - **Command Recipes**: Save and run command macros for daily workflows
+          - **Project Templates**: Bootstrap common project structures
+          - **Safe Defaults**: Built-in `--dry-run` and `--confirm` flags
+          - **Configuration**: YAML-based configuration (global + per-repo)
+          - **Shell Completions**: Full shell completion support
+          
+          ## Quick Start
+          
+          ```bash
+          # Install
+          go install github.com/nghiadaulau/opsbrew@latest
+          
+          # Git operations
+          opsbrew git status
+          opsbrew git sync
+          
+          # Kubernetes operations
+          opsbrew k8s kctx
+          opsbrew k8s khpa set-min my-hpa 2 -n production
+          
+          # File operations
+          opsbrew file backup config.yaml
+          ```
+          
+          [View Full Documentation]({{ site.baseurl }}/README.html)
+          EOF
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -4,43 +4,73 @@
 *.dll
 *.so
 *.dylib
+opsbrew
+
+# Test binary, built with `go test -c`
 *.test
 
-# Output of the go build
+# Output of the go coverage tool, specifically when used with LiteIDE
 *.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
 
 # Go workspace file
 go.work
-go.work.sum
 
-# Dependency directories (go mod handles dependencies)
-vendor/
-
-# Build directories
-bin/
-dist/
-build/
-
-# Test cache & coverage
-*.cover
-*.coverprofile
-*.cov
-coverage.out
-
-# IDE / Editor
-.idea/
+# IDE files
 .vscode/
+.idea/
 *.swp
 *.swo
+*~
 
-# OS files
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Logs
 *.log
 
-# Opsbrew specific
-opsbrew.yaml         # local config
-*.local.yaml
-.history.db          # history DB if stored locally
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# Backup files
+*.backup
+*.bak
+
+# Temporary files
+*.tmp
+*.temp
