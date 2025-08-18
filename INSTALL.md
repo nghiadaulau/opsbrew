@@ -8,6 +8,14 @@
 # Install latest version
 go install github.com/nghiadaulau/opsbrew@latest
 
+# Add Go bin to PATH (if not already added)
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+source ~/.bashrc
+
+# Or for zsh
+echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.zshrc
+source ~/.zshrc
+
 # Verify installation
 opsbrew --version
 ```
