@@ -2,13 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"strings"
 
 	"github.com/fatih/color"
 	"github.com/nghiadaulau/opsbrew/internal/config"
-	
 )
 
 var brewCmd = &cobra.Command{
