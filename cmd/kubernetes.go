@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/nghiadaulau/opsbrew/internal/config"
+	"github.com/nghiadaulau/opsbrew/internal/kubernetes"
 	"github.com/spf13/cobra"
-	"opsbrew/internal/config"
-	"opsbrew/internal/kubernetes"
 )
 
 var k8sCmd = &cobra.Command{

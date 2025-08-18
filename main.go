@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"opsbrew/cmd"
+	"github.com/nghiadaulau/opsbrew/cmd"
 )
 
 func main() {

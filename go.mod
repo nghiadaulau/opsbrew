@@ -1,4 +1,4 @@
-module opsbrew
+module github.com/nghiadaulau/opsbrew
 
 go 1.24
 

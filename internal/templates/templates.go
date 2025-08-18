@@ -7,7 +7,7 @@ import (
 	"strings"
 	"text/template"
 
-	"opsbrew/internal/config"
+	"github.com/nghiadaulau/opsbrew/internal/config"
 )
 
 // Template represents a project template

@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/spf13/cobra"
-	"opsbrew/internal/config"
+	"github.com/nghiadaulau/opsbrew/internal/config"
+	
 )
 
 var brewCmd = &cobra.Command{

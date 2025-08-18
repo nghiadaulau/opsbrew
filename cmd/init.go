@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
+	"github.com/nghiadaulau/opsbrew/internal/config"
+	"github.com/nghiadaulau/opsbrew/internal/templates"
 	"github.com/spf13/cobra"
-	"opsbrew/internal/config"
-	"opsbrew/internal/templates"
 )
 
 var initCmd = &cobra.Command{
@@ -67,7 +67,7 @@ var initListCmd = &cobra.Command{
 	Short: "List available templates",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		templates := templates.GetAvailableTemplates()
-		
+
 		fmt.Println("=== Available Templates ===")
 		for _, template := range templates {
 			color.Cyan("  %s", template.Name)
